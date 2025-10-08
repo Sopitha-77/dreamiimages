@@ -14,7 +14,7 @@ const sendWelcomeEmail = async (userEmail, userName = 'User') => {
           subject: 'Welcome to DremiImages - Unleash Your AI Creativity!'
         }
       ],
-      from: { email: 'hello@dremiimages.com', name: 'DremiImages' },
+      from: { email: 'sopithasopitha7@gmail.com', name: 'DremiImages' }, // ← USE YOUR VERIFIED EMAIL
       content: [
         {
           type: 'text/html',
