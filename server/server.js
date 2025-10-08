@@ -5,12 +5,17 @@ import connectDB from './config/mongodb.js';
 import userRoutes from './routes/userRoutes.js';
 import imageRoutes from './routes/imageRoutes.js';
 
-const PORT = process.env.PORT || 5000;
 const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://dreamiimages-p4k2b6a3e-sopithas-projects.vercel.app'
+  ],
+  credentials: true
+}));
 
 // Connect Database
 connectDB();
@@ -21,7 +26,7 @@ app.use('/api/image', imageRoutes);
 
 // Test route
 app.get('/', (req, res) => {
-  res.json({ message: 'API working' });
+  res.json({ message: 'DremiImages API is working!' });
 });
 
 // Test email route
@@ -53,8 +58,10 @@ app.get('/test-email', async (req, res) => {
   }
 });
 
-// Start server
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📧 Test email route: http://localhost:${PORT}/test-email`);
 });
+
+export default app;
