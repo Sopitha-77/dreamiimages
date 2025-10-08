@@ -1,32 +1,26 @@
 import nodemailer from 'nodemailer';
 
-// Create transporter with better settings for production
+console.log('📧 Email service loading with SendGrid...');
+
+// SendGrid SMTP Configuration
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587, // Use port 587 instead of 465
-  secure: false, // true for 465, false for other ports
+  host: 'smtp.sendgrid.net',
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 30000, // 30 seconds
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-  // Add these for better reliability
-  tls: {
-    rejectUnauthorized: false
+    user: 'apikey', // ← Literally the word 'apikey'
+    pass: process.env.SENDGRID_API_KEY, // Your SendGrid API key
   }
 });
 
 // Welcome email function
 const sendWelcomeEmail = async (userEmail, userName = 'User') => {
   try {
-    console.log('📧 Starting email send process...');
+    console.log('📧 Starting email send process with SendGrid...');
     console.log('📧 Recipient:', userEmail);
-    console.log('📧 Sender:', process.env.EMAIL_USER);
 
     const mailOptions = {
-      from: `DremiImages <${process.env.EMAIL_USER}>`,
+      from: 'DremiImages <hello@dremiimages.com>',
       to: userEmail,
       subject: 'Welcome to DremiImages - Unleash Your AI Creativity!',
       html: `
@@ -92,16 +86,13 @@ const sendWelcomeEmail = async (userEmail, userName = 'User') => {
       `,
     };
 
-    console.log('📧 Sending email now...');
+    console.log('📧 Sending email with SendGrid...');
     const result = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent successfully! Message ID:', result.messageId);
-    console.log('✅ Response:', result.response);
+    console.log('✅ Email sent successfully with SendGrid! Message ID:', result.messageId);
     return true;
   } catch (error) {
-    console.error('❌ Email sending failed!');
-    console.error('❌ Error name:', error.name);
-    console.error('❌ Error message:', error.message);
-    console.error('❌ Error code:', error.code);
+    console.error('❌ SendGrid email failed!');
+    console.error('❌ Error:', error.message);
     return false;
   }
 };
