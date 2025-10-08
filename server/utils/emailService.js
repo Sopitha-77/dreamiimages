@@ -1,16 +1,20 @@
-// utils/emailService.js
 import nodemailer from 'nodemailer';
 
-console.log('📧 Email service loading...');
-console.log('📧 EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Not set');
-console.log('📧 EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set' : 'Not set');
-
-// Create transporter
+// Create transporter with better settings for production
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587, // Use port 587 instead of 465
+  secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
+  },
+  connectionTimeout: 30000, // 30 seconds
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
+  // Add these for better reliability
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -36,8 +40,7 @@ const sendWelcomeEmail = async (userEmail, userName = 'User') => {
                 .content { padding: 40px 30px; }
                 .step { background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea; }
                 .footer { text-align: center; padding: 30px; background: #2c3e50; color: #ecf0f1; font-size: 14px; }
-                .btn { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 35px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px; margin: 20px 0; transition: transform 0.3s; }
-                .btn:hover { transform: translateY(-2px); }
+                .btn { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 35px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 16px; margin: 20px 0; }
                 .credit-badge { background: #e8f4fd; color: #2c3e50; padding: 10px 20px; border-radius: 20px; font-weight: bold; display: inline-block; margin: 15px 0; }
             </style>
         </head>
