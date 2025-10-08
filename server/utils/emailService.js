@@ -1,6 +1,10 @@
 import nodemailer from 'nodemailer';
 
-console.log('📧 Email service loading with SendGrid...');
+console.log('🔧 DEBUG: Email service loading...');
+console.log('🔧 DEBUG: SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY ? `✅ SET (length: ${process.env.SENDGRID_API_KEY.length})` : '❌ NOT SET');
+console.log('🔧 DEBUG: FRONTEND_URL:', process.env.FRONTEND_URL || 'Not set');
+
+// Rest of your existing code...
 
 // SendGrid SMTP Configuration
 const transporter = nodemailer.createTransport({
