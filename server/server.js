@@ -9,13 +9,46 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+
+// Enhanced CORS configuration
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://dreamiimages-p4k2b6a3e-sopithas-projects.vercel.app'
-  ],
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://dreamiimages-p4k2b6a3e-sopithas-projects.vercel.app',
+      'https://dreamiimages-h7b5xt78l-sopithas-projects.vercel.app',
+      'https://dreamiimages-git-main-sopitha-77.vercel.app',
+      'https://dreamiimages-sopitha-77.vercel.app',
+      /\.vercel\.app$/ // Allow all Vercel deployments
+    ];
+    
+    // Check if the origin matches any allowed pattern
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (typeof allowed === 'string') {
+        return origin === allowed;
+      } else if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked for origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 // Connect Database
 connectDB();
@@ -27,6 +60,16 @@ app.use('/api/image', imageRoutes);
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'DremiImages API is working!' });
+});
+
+// Debug route to check CORS
+app.get('/debug-cors', (req, res) => {
+  res.json({
+    message: 'CORS is working!',
+    origin: req.headers.origin,
+    allowed: true,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Test email route
@@ -62,6 +105,7 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🌐 CORS enabled for Vercel deployments`);
 });
 
 export default app;
